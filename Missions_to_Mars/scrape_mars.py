@@ -12,12 +12,17 @@ soup = BeautifulSoup(response.text, 'html.parser')
 title = soup.title.text
 print(title)
 
+paragraphs = soup.find_all('p')
+for paragraph in paragraphs:
+    print(paragraph.text)
+
 executable_path = {'executable_path': './chromedriver.exe'}
 browser = Browser('chrome', **executable_path, headless=False)
 
 url = 'https://www.jpl.nasa.gov/spaceimages/?search=&category=Mars'
 browser.visit(url)
 
+for x in range(1):  
     html = browser.html
     soup = BeautifulSoup(html, 'html.parser')
     images = soup.find_all('a', class_='button fancybox')
@@ -26,7 +31,10 @@ for image in images:
     href = image["data-fancybox-href"]
     print('https://www.jpl.nasa.gov' + href)
     
-featured_image_url = 'https://www.jpl.nasa.gov' + href
+    featured_image_url = 'https://www.jpl.nasa.gov' + href
+
+    mars_data["featured"] = featured_image_url
+
 
 url = 'https://space-facts.com/mars/'
 
@@ -41,6 +49,8 @@ df.head()
 
 html_table = df.to_html()
 html_table
+
+mars_data["html_table"] = html_table
 
 conn = 'mongodb://localhost:27107'
 client = pymongo.MongoClient(conn)
@@ -67,3 +77,7 @@ for l in range(len(links)):
     browser.back()
 
 hemisphere_image_urls    
+
+browswer.quit()
+
+return mars_data
